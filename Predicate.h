@@ -19,13 +19,14 @@ private:
 
     string name;
     vector<Parameter> parameters;
-    string end = "";
+    string end;
 
 public:
     //contructor
     Predicate(string name)
     {
         this->name = name;
+        end ="";
     }
 
     //get fuctions
@@ -39,6 +40,7 @@ public:
     void getEnd(string endChar)
     {
         end = endChar;
+//        cout << end << endl;
     }
     //get parameters
     vector<Parameter> getParameters()
