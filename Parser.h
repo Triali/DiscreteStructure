@@ -155,8 +155,8 @@ public:
             id();
             Predicate scheme = Predicate(curToken.getValue());
             match(LEFT_PAREN);
-            id();
-            idList();
+            scheme.AddParameter(id());
+            idList(scheme);
             match(RIGHT_PAREN);
             return scheme;
         }
@@ -257,14 +257,14 @@ public:
         }
     }
 
-    void idList()
+    void idList(Predicate &Pred)
     {
         if (tokenType() == COMMA)
         {
             match(COMMA);
-            id();
-//            Pred.AddParameter(id());
-            idList();
+//            id();
+            Pred.AddParameter(id());
+            idList(Pred);
         }
         else
         {
@@ -281,7 +281,7 @@ public:
         }
         else
         {
-            id();
+            match(ID);
         }
 
 
