@@ -36,7 +36,7 @@ public:
             cerr << msg << endl;
             exit(1);
         }
-        
+
         cout << "Success!" << endl;
     }
 
@@ -102,6 +102,7 @@ public:
         query();
         queryList();
         match(ENDFILE);
+
     }
 
     void schemeList()
@@ -154,6 +155,7 @@ public:
         {
             //lambda
         }
+        cout << "finished QList" << endl;
     }
 
     Predicate scheme()
@@ -167,6 +169,7 @@ public:
             scheme.AddParameter(id());
             idList(scheme);
             match(RIGHT_PAREN);
+            cout << scheme.PredicateToString() << endl;
             return scheme;
         }
     }
@@ -176,10 +179,12 @@ public:
         id();
         Predicate fact = Predicate(curToken.getValue());
         match(LEFT_PAREN);
-        match(STRING);
-        stringList();
+        stringM();
+        stringList(fact);
         match(RIGHT_PAREN);
         match(PERIOD);
+        fact.getEnd(".");
+        cout << fact.PredicateToString() << endl;
         return fact;
     }
 
@@ -190,12 +195,17 @@ public:
         predicate();
         predicateList();
         match(PERIOD);
+
     }
 
     Predicate query()
     {
-        predicate();
+        Predicate query = predicate();
         match(Q_MARK);
+        query.getEnd("?");
+        cout << query.PredicateToString() << endl;
+        return query;
+
     }
 
     Predicate headPredicate()
@@ -220,7 +230,7 @@ public:
         Pred.AddParameter(parameter());
         parameterList(Pred);
         match(RIGHT_PAREN);
-        cout << Pred.PredicateToString() << endl;
+//        cout << Pred.PredicateToString() << endl;
         return Pred;
     }
 
@@ -252,13 +262,13 @@ public:
         }
     }
 
-    void stringList()
+    void stringList(Predicate &Pred)
     {
         if (tokenType() == COMMA)
         {
             match(COMMA);
-            match(STRING);
-            stringList();
+            Pred.AddParameter(stringM());
+            stringList(Pred);
         }
         else
         {
@@ -302,6 +312,13 @@ public:
     Parameter id()
     {
         match(ID);
+        Parameter Para = Parameter(curToken.getValue());
+        return Para;
+    }
+
+    Parameter stringM()
+    {
+        match(STRING);
         Parameter Para = Parameter(curToken.getValue());
         return Para;
     }
