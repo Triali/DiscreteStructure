@@ -19,6 +19,7 @@ private:
 
     string name;
     vector<Parameter> parameters;
+    string end = "";
 
 public:
     //contructor
@@ -33,6 +34,11 @@ public:
     string getName()
     {
         return name;
+    }
+
+    void getEnd(string endChar)
+    {
+        end = endChar;
     }
     //get parameters
     vector<Parameter> getParameters()
@@ -62,7 +68,7 @@ public:
             }
         }
 //        add last paranthisis
-        predicateString << ")";
+        predicateString << ")" << end;
         return predicateString.str();
     }
 
