@@ -24,6 +24,22 @@ public:
     Parser(const vector<Token> &tokens) : tokens(tokens)
     {}
 
+    void parse()
+    {
+
+        try
+        {
+            datalogProgram();
+        }
+        catch (string msg)
+        {
+            cerr << msg << endl;
+            exit(1);
+        }
+        
+        cout << "Success!" << endl;
+    }
+
     TokenType tokenType()
     {
         curToken = tokens.at(0);
@@ -53,8 +69,7 @@ public:
     {
         cout << "match: " << t << endl;
 //        if the current token type matches t
-        try
-        {
+
             if (t == tokenType())
             {
 //        advance to the next token
@@ -67,11 +82,7 @@ public:
 //cout << curToken.getType() <<endl;
                 throwError();
             }
-        } catch (string msg)
-        {
-            cerr << msg << endl;
-            exit(1);
-        }
+
     }
 
     void datalogProgram()
@@ -91,8 +102,6 @@ public:
         query();
         queryList();
         match(ENDFILE);
-
-        cout << "Success!" << endl;
     }
 
     void schemeList()
@@ -195,7 +204,7 @@ public:
         Predicate headPred = Predicate(curToken.getValue());
         match(LEFT_PAREN);
         id();
-//        idList(headPred);
+        idList(headPred);
         match(RIGHT_PAREN);
         return headPred;
     }
