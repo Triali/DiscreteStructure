@@ -152,10 +152,10 @@ public:
         // RULE scheme -> ID LEFT_PAREN ID idList RIGHT_PAREN
         if (tokenType() == ID)
         {
-            match(ID);
+            id();
             Predicate scheme = Predicate(curToken.getValue());
             match(LEFT_PAREN);
-            match(ID);
+            id();
             idList();
             match(RIGHT_PAREN);
             return scheme;
@@ -164,7 +164,7 @@ public:
 
     Predicate fact()
     {
-        match(ID);
+        id();
         Predicate fact = Predicate(curToken.getValue());
         match(LEFT_PAREN);
         match(STRING);
@@ -191,10 +191,10 @@ public:
 
     Predicate headPredicate()
     {
-        match(ID);
+        id();
         Predicate headPred = Predicate(curToken.getValue());
         match(LEFT_PAREN);
-        match(ID);
+        id();
 //        idList(headPred);
         match(RIGHT_PAREN);
         return headPred;
@@ -204,7 +204,7 @@ public:
     {
         // declare predicate variable
 
-        match(ID);
+        id();
 //        PrintCurToken();
         Predicate Pred = Predicate(curToken.getValue());
         match(LEFT_PAREN);
@@ -262,7 +262,7 @@ public:
         if (tokenType() == COMMA)
         {
             match(COMMA);
-            match(ID);
+            id();
 //            Pred.AddParameter(id());
             idList();
         }
@@ -281,7 +281,7 @@ public:
         }
         else
         {
-            match(ID);
+            id();
         }
 
 
@@ -290,11 +290,11 @@ public:
         return Para;
     };
 
-    void id()
+    Parameter id()
     {
         match(ID);
-//        Parameter Para = Parameter(curToken.getValue());
-//        return Para;
+        Parameter Para = Parameter(curToken.getValue());
+        return Para;
     }
 
 };
