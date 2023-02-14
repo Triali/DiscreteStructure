@@ -93,16 +93,20 @@ public:
 //        cout << scheme().PredicateToString() << endl;
         datalogProgram.addScheme(scheme());
         schemeList(datalogProgram);
+
         match(FACTS);
         match(COLON);
-        factList();
+        factList(datalogProgram);
+
         match(RULES);
         match(COLON);
-        ruleList();
+        ruleList(datalogProgram);
+
         match(QUERIES);
         match(COLON);
         datalogProgram.addQuery(query());
-        queryList();
+        queryList(datalogProgram);
+
         match(ENDFILE);
 
     }
@@ -120,12 +124,12 @@ public:
         }
     }
 
-    void factList()
+    void factList(DatalogProgram &dP)
     {
         if (tokenType() == ID)
         {
-            fact();
-            factList();
+            dP.addFact(fact());
+            factList(dP);
         }
         else
         {
@@ -133,12 +137,12 @@ public:
         }
     }
 
-    void ruleList()
+    void ruleList(DatalogProgram &dP)
     {
         if (tokenType() == ID)
         {
-            rule();
-            ruleList();
+            dP.addRule(rule());
+            ruleList(dP);
         }
         else
         {
@@ -146,12 +150,12 @@ public:
         }
     }
 
-    void queryList()
+    void queryList(DatalogProgram &dP)
     {
         if (tokenType() == ID)
         {
-            query();
-            queryList();
+            dP.addQuery(query());
+            queryList(dP);
         }
         else
         {
