@@ -20,6 +20,8 @@ private:
     vector<Predicate> queries;
 
     set<string> domain;
+    set<string>::iterator itr;
+
 
 public:
     void addScheme(Predicate newScheme)
@@ -30,6 +32,11 @@ public:
     void addFact(Predicate newFact)
     {
         facts.push_back(newFact);
+        for (int i = 0; i < newFact.getParameters().size(); ++i)
+        {
+            domain.insert(newFact.getParameters().at(i).getValue());
+        }
+
     }
 
     void addRule(Rule newRule)
@@ -57,7 +64,8 @@ public:
         dpString << "Queries(" << queries.size() << "):" << endl;
         dpString << PredVectToString(queries);
 
-        dpString << "Domain(" << "#" << "):" << endl;
+        dpString << "Domain(" << domain.size() << "):" << endl;
+        dpString << StringSetToString(domain);
 
         return dpString.str();
     }
@@ -77,9 +85,18 @@ public:
         stringstream ruleString;
         for (int i = 0; i < ruleVect.size(); ++i)
         {
-            ruleString << ruleVect.at(i).RuleToString();
+            ruleString << ruleVect.at(i).RuleToString() << endl;
         }
         return ruleString.str();
+    }
+
+    string StringSetToString(set<string> sSet)
+    {
+        stringstream setString;
+        for (itr = sSet.begin(); itr != sSet.end(); itr++) {
+            setString << *itr << endl;
+        }
+        return setString.str();
     }
 
 
