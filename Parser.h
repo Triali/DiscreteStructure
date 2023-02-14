@@ -26,10 +26,10 @@ public:
 
     void parse()
     {
-
+        DatalogProgram datalogProgram1;
         try
         {
-            datalogProgram();
+            datalogProgram(datalogProgram1);
         }
         catch (string msg)
         {
@@ -38,6 +38,7 @@ public:
         }
 
         cout << "Success!" << endl;
+        cout << datalogProgram1.DatalogProgramToString();
     }
 
     TokenType tokenType()
@@ -67,30 +68,31 @@ public:
 
     void match(TokenType t)
     {
-        cout << "match: " << t << endl;
+//        cout << "match: " << t << endl;
 //        if the current token type matches t
 
-            if (t == tokenType())
-            {
+        if (t == tokenType())
+        {
 //        advance to the next token
-                advanceToken();
-            }
-            else
-            {
+            advanceToken();
+        }
+        else
+        {
 //        report a syntax error
 //cout << t << endl;
 //cout << curToken.getType() <<endl;
-                throwError();
-            }
+            throwError();
+        }
 
     }
 
-    void datalogProgram()
+    void datalogProgram(DatalogProgram& datalogProgram)
     {
         match(SCHEMES);
         match(COLON);
-        scheme();
-        schemeList();
+//        cout << scheme().PredicateToString() << endl;
+        datalogProgram.addScheme(scheme());
+        schemeList(datalogProgram);
         match(FACTS);
         match(COLON);
         factList();
@@ -99,18 +101,18 @@ public:
         ruleList();
         match(QUERIES);
         match(COLON);
-        query();
+        datalogProgram.addQuery(query());
         queryList();
         match(ENDFILE);
 
     }
 
-    void schemeList()
+    void schemeList(DatalogProgram &dP)
     {
         if (tokenType() == ID)
         {
-            scheme();
-            schemeList();
+            dP.addScheme(scheme());
+            schemeList(dP);
         }
         else
         {
@@ -155,23 +157,20 @@ public:
         {
             //lambda
         }
-        cout << "finished QList" << endl;
+//        cout << "finished QList" << endl;
     }
 
     Predicate scheme()
     {
         // RULE scheme -> ID LEFT_PAREN ID idList RIGHT_PAREN
-        if (tokenType() == ID)
-        {
-            id();
-            Predicate scheme = Predicate(curToken.getValue());
-            match(LEFT_PAREN);
-            scheme.AddParameter(id());
-            idList(scheme);
-            match(RIGHT_PAREN);
-            cout << scheme.PredicateToString() << endl;
-            return scheme;
-        }
+        id();
+        Predicate scheme = Predicate(curToken.getValue());
+        match(LEFT_PAREN);
+        scheme.AddParameter(id());
+        idList(scheme);
+        match(RIGHT_PAREN);
+//        cout << scheme.PredicateToString() << endl;
+        return scheme;
     }
 
     Predicate fact()
@@ -184,17 +183,22 @@ public:
         match(RIGHT_PAREN);
         match(PERIOD);
         fact.getEnd(".");
-        cout << fact.PredicateToString() << endl;
+//        cout << fact.PredicateToString() << endl;
         return fact;
     }
 
-    void rule()
+    Rule rule()
     {
-        headPredicate();
+
+        Predicate HP = headPredicate();
         match(COLON_DASH);
-        predicate();
-        predicateList();
+        Predicate FP = predicate();
+        Rule Ru = Rule(HP, FP);
+        predicateList(Ru);
+//        cout << Ru.RuleToString() << endl;
         match(PERIOD);
+        return Ru;
+
 
     }
 
@@ -203,7 +207,7 @@ public:
         Predicate query = predicate();
         match(Q_MARK);
         query.getEnd("?");
-        cout << query.PredicateToString() << endl;
+//        cout << query.PredicateToString() << endl;
         return query;
 
     }
@@ -234,13 +238,13 @@ public:
         return Pred;
     }
 
-    void predicateList()
+    void predicateList(Rule &Ru)
     {
         if (tokenType() == COMMA)
         {
             match(COMMA);
-            predicate();
-            predicateList();
+            Ru.addPredicate(predicate());
+            predicateList(Ru);
         }
         else
         {
